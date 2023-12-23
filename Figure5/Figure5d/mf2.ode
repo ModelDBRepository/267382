@@ -1,0 +1,70 @@
+# Mean-field model of two populations of Izhikevich neurons
+# By Liang Chen, Nov.4, 2021
+#
+# ref. [Nicola&Campbell2013]:Mean-field models for heterogeneous networks
+#          of two-dimensional integrate and fire neurons
+# ref. [Nicola&Campbell2013]:Bifurcation of large networks of two dimensional integrate and fire neurons
+#      numerical example 2
+
+
+
+
+# user defined functions:
+gs1(sm1,sm2)=p1*gsyn11*sm1+(1-p1)*gsyn12*sm2
+gs2(sm1,sm2)=p1*gsyn21*sm1+(1-p1)*gsyn22*sm2
+
+
+# Population 1:
+drm1/dt=hw/pi+2*rm1*vm1-rm1*(gs1(sm1,sm2)+alpha)
+dvm1/dt=vm1^2-alpha*vm1+gs1(sm1,sm2)*(er-vm1)-pi^2*rm1^2-wm1+mu+Iext1
+dwm1/dt=a1*(b*vm1-wm1)+wjump1*rm1
+dsm1/dt=-sm1/tsyn+sjump*rm1
+
+
+# Population 2:
+drm2/dt=hw/pi+2*rm2*vm2-rm2*(gs2(sm1,sm2)+alpha)
+dvm2/dt=vm2^2-alpha*vm2+gs2(sm1,sm2)*(er-vm2)-pi^2*rm2^2-wm2+mu+Iext2
+dwm2/dt=a2*(b*vm2-wm2)+wjump2*rm2
+dsm2/dt=-sm2/tsyn+sjump*rm2
+
+# sm1 \in [0,1]: (the global flag doesn't work. E.g. when the applied current is big enough)
+Global 1 {sm1-1} {sm1=1}
+# sm2 \in [0,1]:
+Global 1 {sm2-1} {sm2=1}
+
+# p1 \in [0,1]
+Global 1 {p1-1} {p1=1}
+
+
+# parameters
+Par mu=0.03
+par hw=0.02  
+par p1=0.5
+
+#
+par a1=0.0077, a2=0.077
+par wjump1=0.0189, wjump2=0.0095
+par gsyn11=1.2308, gsyn12=1.2308
+par gsyn21=1.2308, gsyn22=1.2308
+Par Iext1=0, Iext2=0
+par er=1, b=-0.0062, alpha=0.6215, sjump=1.2308, tsyn=2.6
+
+
+
+# initial conditions
+rm1(0)=0, rm2(0)=0
+vm1(0)=0, vm2(0)=0
+wm1(0)=0, wm2(0)=0
+sm1(0)=0, sm2(0)=0
+
+
+
+@xplot=t, yplot=rm1, xlo=0, xhi=800, ylo=0, yhi=0.02, bell=0
+@total=5000, dt=0.001, maxstor=2000000, bounds=1000000
+@ ntst=150, npr=500, nmax=2000, ds=0.0001, dsmin=0.0001, dsmax=0.001, ncol=5
+@ parmin=0, parmax=0.2, epsl=0.000001, epsu=0.000001, epss=0.000001 
+@ AUTOXMIN=0, AUTOXMAX=0.2, AUTOYMIN=0, AUTOYMAX=0.15
+@ BUT=QUIT:fq, BUT=AUTO:fa
+
+Done
+

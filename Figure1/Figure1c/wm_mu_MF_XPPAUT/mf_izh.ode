@@ -1,0 +1,41 @@
+# Mean-field model of one population of Izhikevich neurons
+# By Liang Chen, Oct. 26, 2021
+#
+# ref. [Nicola&Campbell2013]:Mean-field models for heterogeneous networks
+#          of two-dimensional integrate and fire neurons
+
+
+
+# parameters
+par mu=0.3, hw=0.02, I=0 
+par gsyn=1.2308,  er=1
+par b=-0.0062, wjump=0.0189
+par alpha=0.6215, sjump=1.2308, ts=2.6, a=0.0077
+
+
+
+
+# initial conditions
+init rm=0, vm=0, wm=b*vm, sm=0
+
+
+# the model:
+wm'=a*(b*vm-wm)+wjump*rm
+rm'=hw/pi+2*rm*vm-rm*(gsyn*sm+alpha)
+vm'=vm^2-alpha*vm-wm+mu+I+gsyn*sm*(er-vm)-pi^2*rm^2
+sm'=-sm/ts+sjump*rm
+Global 1 {sm-1} {sm=1}
+
+
+
+
+@xplot=t, yplot=wm, xlo=0, xhi=800, ylo=0, yhi=1, bell=0
+@total=5000, dt=0.001, maxstor=2000000, bounds=1000000
+@ ntst=150, npr=500, nmax=2000, ds=-1e-04, dsmin=1e-04, dsmax=1e-03, ncol=5
+@ parmin=0, parmax=0.3, epsl=0.000001, epsu=0.000001, epss=0.000001 
+@ AUTOXMIN=0, AUTOXMAX=0.3, AUTOYMIN=0, AUTOYMAX=0.3
+@ BUT=QUIT:fq, BUT=AUTO:fa
+
+Done
+
+
